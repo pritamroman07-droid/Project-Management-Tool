@@ -1,9 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// Apply theme immediately on store initialization to avoid flash of wrong theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
-    theme: localStorage.getItem('theme') || 'light',
+    theme: savedTheme,
     sidebarOpen: true,
     sidebarCollapsed: false,
     activeModal: null,

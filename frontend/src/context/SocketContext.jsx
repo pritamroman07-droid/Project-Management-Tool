@@ -18,7 +18,7 @@ export const SocketProvider = ({ children }) => {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+    const socket = io('http://localhost:5005', {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,

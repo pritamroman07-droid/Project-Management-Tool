@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Task = require('../models/Task');
 const Project = require('../models/Project');
 const User = require('../models/User');
@@ -66,7 +67,7 @@ const getTaskTrends = async (req, res, next) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     const matchStage = { completedAt: { $gte: thirtyDaysAgo }, status: 'done' };
-    if (projectId) matchStage.project = require('mongoose').Types.ObjectId(projectId);
+    if (projectId) matchStage.project = new mongoose.Types.ObjectId(projectId);
 
     const trends = await Task.aggregate([
       { $match: matchStage },
@@ -86,7 +87,7 @@ const getTeamPerformance = async (req, res, next) => {
   try {
     const { projectId } = req.query;
     const matchStage = { status: 'done' };
-    if (projectId) matchStage.project = require('mongoose').Types.ObjectId(projectId);
+    if (projectId) matchStage.project = new mongoose.Types.ObjectId(projectId);
 
     const performance = await Task.aggregate([
       { $match: matchStage },
@@ -111,7 +112,7 @@ const getPriorityDistribution = async (req, res, next) => {
   try {
     const { projectId } = req.query;
     const matchStage = { isArchived: false };
-    if (projectId) matchStage.project = require('mongoose').Types.ObjectId(projectId);
+    if (projectId) matchStage.project = new mongoose.Types.ObjectId(projectId);
 
     const distribution = await Task.aggregate([
       { $match: matchStage },
@@ -151,7 +152,7 @@ const getAiInsights = async (req, res, next) => {
       { $sort: { count: -1 } },
       { $limit: 1 },
       { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'user' } },
-      { $unwind: { path: '$user', preserveNullAndEmpty: true } },
+      { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
     ]);
 
     const insights = await generateInsights({
